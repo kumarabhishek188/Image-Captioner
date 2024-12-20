@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% load static %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Caption Generator</title>
+  <link rel="icon" href="{% static 'favicon.png' %}" type="image/x-icon">
+  <link href="{% static 'css/tailwind.css' %}" rel="stylesheet">
+  <style>
+    body {
+      background-image: url("{% static 'image.png' %}");
+      background-size: cover;
+      background-position: center;
+    }
+    .blur-bg {
+      backdrop-filter: blur(10px);
+      background-color: rgba(255, 255, 255, 0.6);
+    }
+  </style>
+  <script src="{% static './script.js' %}" defer></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+  <div class="flex flex-col lg:flex-row items-center lg:items-start justify-center gap-8">
+    <!-- Upload and Capture Section -->
+    <div class="max-w-md w-full shadow-md rounded-lg p-6 blur-bg">
+      <h1 class="text-2xl font-bold text-center mb-4">Image Caption Generator</h1>
+      <form method="POST" enctype="multipart/form-data" id="image-form" class="space-y-4">
+        {% csrf_token %}
+        <label class="block text-sm font-medium text-gray-900" for="file_input">Upload file</label>
+        <input class="block w-full text-sm text-gray-900 border rounded-lg cursor-pointer bg-gray-50" 
+               id="file_input" name="image" type="file" accept="image/*">
+        <p class="mt-1 text-sm text-gray-500">SVG, PNG, JPG (MAX: 800x400px).</p>
+
+        <h2 class="text-xl mt-4">Or Capture an Image with Camera</h2>
+        <video id="video" width="320" height="240" autoplay class="border border-gray-300 rounded-lg"></video>
+        <canvas id="canvas" style="display: none"></canvas>
+        <input type="hidden" id="captured_image" name="captured_image" />
+        <button type="button" id="capture-button" class="mt-2 bg-blue-500 text-white py-2 px-4 rounded-lg">Capture Image</button>
+
+        <h3 class="mt-4 text-lg font-semibold">Input Image:</h3>
+        <img id="captured-image" src="data:image/png;base64,{{ image_data|default:'' }}" 
+             alt="Captured Image" class="w-80 h-60 border rounded-lg {% if not image_data %}hidden{% endif %}" />
+
+        {% if caption %}
+        <div class="mt-4">
+          <h3 class="text-lg font-semibold">Generated Caption:</h3>
+          <p class="mt-2 p-4 bg-gray-100 border rounded-lg">{{ caption|escape }}</p>
+          <button type="button" onclick="playCaptionAudio('{{ caption|escapejs }}')" 
+                  class="mt-4 w-full bg-blue-500 text-white py-2 px-4 rounded-lg">Play Caption Audio</button>
+        </div>
+        {% endif %}
+        <button type="submit" class="mt-4 w-full bg-green-500 text-white py-2 px-4 rounded-lg">Generate Caption</button>
+      </form>
+    </div>
+
+    <!-- Tags and Related Images Section -->
+    {% if tags or image_links %}
+    <div class="max-w-lg w-full shadow-md rounded-lg p-6 blur-bg">
+      {% if tags %}
+      <div class="mt-6">
+        <h2 class="text-lg font-bold">Generated Tags:</h2>
+        <ul class="flex flex-wrap gap-2 mt-2">
+          {% for tag in tags %}
+          <li class="text-white text-sm font-medium px-4 py-2 rounded-full shadow-md 
+                    {% cycle 'bg-red-500' 'bg-green-500' 'bg-blue-500' 'bg-yellow-500' 'bg-purple-500' %}">
+            {{ tag }}
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      {% if image_links %}
+      <div class="mt-6">
+        <h2 class="text-lg font-bold">Related Images:</h2>
+        <div class="grid grid-cols-2 gap-4 mt-4">
+          {% for link in image_links %}
+          <a href="{{ link }}" target="_blank" class="relative group">
+            <img src="{{ link }}" alt="Related Image" 
+                 class="w-full h-48 object-cover rounded-lg shadow-lg transition-transform duration-300 group-hover:scale-105">
+            <div class="absolute inset-0 bg-black opacity-0 group-hover:opacity-40 transition-opacity duration-300"></div>
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</body>
+</html>
