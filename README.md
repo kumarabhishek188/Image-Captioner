@@ -30,8 +30,8 @@ Follow these steps to set up and run the application locally:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/kumarabhishek188/Real-Time AI Image Captioner.git
-cd Real-Time AI Image Captioner
+git clone https://github.com/kumarabhishek188/Real-Time-AI-Image-Captioner.git
+cd Real-Time-AI-Image-Captioner
 ```
 
 ### 2. Set Up a Virtual Environment
