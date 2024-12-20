@@ -60,7 +60,7 @@ python manage.py migrate
 Download and set up the pre-trained image captioning model. Replace the example URL with the actual download instructions for your model:
 
 ```bash
-wget https://github.com/kumarabhishek188/Real-Time AI Image-Captioner-model/releases/download/v1.0/model.pth
+wget https://github.com/kumarabhishek188/Real-Time-AI-Image-Captioner-model/releases/download/v1.0/model.pth
 ```
 
 Ensure the model file is placed in the correct directory as expected by the application.
